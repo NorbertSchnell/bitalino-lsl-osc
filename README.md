@@ -9,7 +9,7 @@ This Node.js code connects to Bitalinos OpenSignals (with *Lab Streaming Layer* 
 npm install
 ```
 
-### Get OpenSignals
+### Get Bitalino *OpenSignals*
 - Description: https://www.pluxbiosignals.com/pages/opensignals
 - Manual: https://support.pluxbiosignals.com/wp-content/uploads/2021/11/OpenSignals_Manual.pdf
 
@@ -17,4 +17,3 @@ npm install
 ```
 node bridge.js
 ```
-
