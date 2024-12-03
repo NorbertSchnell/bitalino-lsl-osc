@@ -1,34 +1,59 @@
-const lsl = require('lsl.js');
 const Osc = require('node-osc');
 
 const oscHost = '0.0.0.0';
 const oscPort = 3000;
 const oscClient = new Osc.Client(oscHost, oscPort);
 
-const lslStreams = lsl.resolve_byprop('name', 'OpenSignals');
+const net = require('net');
 
-if (lslStreams.length > 0) {
-  const streamInlet = new lsl.StreamInlet(lslStreams[0]);
-  streamInlet.streamChunks(2, 1000);
-  streamInlet.on('chunk', onLsLChunk);
-  streamInlet.on('closed', () => console.log('LSL inlet closed'));
-} else {
-  console.error('did not find any LSL stream');
+const host = 'localhost';
+const port = 5555;
+
+let socket = new net.Socket();
+
+socket.connect(port, host, () => {
+  console.log(`socket is connected to ${host}:${port}`);
+  socket.write('start\r\n');
+});
+
+function terminate() {
+  socket.destroy();
+  socket = null;
 }
 
-function onLsLChunk(chunk) {
-  const data = chunk.data;
+socket.on('data', (data) => {
+  const str = data.toString();
+  const obj = JSON.parse(str);
 
-  for (let i = 0; i < data[0].length; i++) {
-    const frame = [];
-    
-    for (let j = 0; j < data.length; j++) {
-      frame.push(data[j][i]);
+  if (obj.returnCode === 0) {
+    const deviceData = Object.values(obj.returnData)[0];
+
+    if (Array.isArray(deviceData)) {
+      const length = deviceData.length;
+      let sum = 0.
+
+      console.log(length);
+
+      for (let i = 0; i < length; i++) {
+        const frame = deviceData[i];
+        // const index = frame[0]
+        // const value = frame[5];
+        sum += frame[5];
+      }
+
+      const value = sum / length;
+      oscClient.send('/bitalino', value, onOscError);
+    } else {
+      console.log(obj);
+      console.log('reading device: ',  Object.keys(obj.returnData)[0]);
+      console.log(deviceData);
     }
-
-    oscClient.send('/bitalino', frame, onOscError);
   }
-}
+});
+
+socket.on('close', function () {
+  console.log('connection closed');
+});
 
 function onOscError(error) {
   if (error) {
