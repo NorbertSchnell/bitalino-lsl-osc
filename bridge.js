@@ -32,8 +32,6 @@ socket.on('data', (data) => {
       const length = deviceData.length;
       let sum = 0.
 
-      console.log(length);
-
       for (let i = 0; i < length; i++) {
         const frame = deviceData[i];
         // const index = frame[0]
@@ -44,7 +42,6 @@ socket.on('data', (data) => {
       const value = sum / length;
       oscClient.send('/bitalino', value, onOscError);
     } else {
-      console.log(obj);
       console.log('reading device: ',  Object.keys(obj.returnData)[0]);
       console.log(deviceData);
     }
