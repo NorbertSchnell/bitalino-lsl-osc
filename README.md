@@ -1,6 +1,6 @@
 # Bitalino LSL bridge to OSC
 
-This Node.js code connects to Bitalinos OpenSignals (with *Lab Streaming Layer* enabled) to send out the incoming streams via OSC. A Cycling'74 Max patch shows how to receive the OCS data.
+This Node.js code connects to Bitalinos OpenSignals via TCP to send out the incoming data stream via OSC. A Cycling'74 Max patch shows how to receive the OCS data.
 
 ## Setting up
 
